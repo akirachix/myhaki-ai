@@ -9,4 +9,3 @@ myhakienv/
 *.db
 *.sqlite3
 .git
-.dockerignore
