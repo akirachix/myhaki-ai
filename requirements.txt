@@ -1,9 +1,8 @@
 fastapi
 uvicorn[standard]
-chromadb
-transformers
 torch
-google-generativeai
-pydantic
-requests
+transformers
+python-dotenv
+supabase
 numpy
+google-generativeai

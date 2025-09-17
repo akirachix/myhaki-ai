@@ -9,3 +9,4 @@ myhakienv/
 *.db
 *.sqlite3
 .git
+migrate_chroma_to_supabase.py
