@@ -1,0 +1,12 @@
+venv/
+myhakienv/
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.git
+.gitignore
+
+.DS_Store
