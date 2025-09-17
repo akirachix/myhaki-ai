@@ -1,0 +1,13 @@
+.env
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+myhakienv/
+*.db
+*.sqlite3
+.git
+migrate_chroma_to_supabase.py

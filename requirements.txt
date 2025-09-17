@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+torch
+transformers
+python-dotenv
+supabase
+numpy
+google-generativeai
