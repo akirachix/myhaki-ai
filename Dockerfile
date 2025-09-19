@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl libsndfile1 \
  && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements.txt (without torch)
+# Copy requirements (without torch)
 COPY requirements.txt .
 
 # Install Python dependencies
@@ -32,4 +32,4 @@ COPY . .
 EXPOSE 8001
 
 # Start FastAPI
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port $PORT"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
