@@ -1,5 +1,6 @@
 # Use the official PyTorch CPU image
-FROM pytorch/pytorch:2.1.0-cpu
+FROM pytorch/pytorch:2.8.0-cpu
+
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
