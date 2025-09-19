@@ -15,7 +15,7 @@ jobs:
       VECTOR_SIZE: ${{ secrets.VECTOR_SIZE }}
 
     steps:
-      # 1️⃣ Checkout the repository
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -25,46 +25,33 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      # 3️⃣ Set up gcloud CLI
+      # 3️⃣ Set up Cloud SDK
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      # 4️⃣ Configure Docker authentication for Artifact Registry
-      - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker europe-west1-docker.pkg.dev
-
-      # 5️⃣ Set up Python
+      # 4️⃣ Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 6️⃣ Cache pip dependencies
+      # 5️⃣ Cache pip dependencies
       - name: Cache pip
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
 
-      # 7️⃣ Install Python dependencies
+      # 6️⃣ Install dependencies (optional, for pre-checks or scripts)
       - name: Install dependencies
         run: pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-      # 8️⃣ Build Docker image (lazy-loading models, torch preinstalled in base image)
-      - name: Build Docker image
-        run: |
-          docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag-repo/fastapi-rag:latest .
-
-      # 9️⃣ Push Docker image to Artifact Registry
-      - name: Push Docker image
-        run: |
-          docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag-repo/fastapi-rag:latest
-
-      # 🔟 Deploy to Cloud Run
+      # 7️⃣ Deploy directly from source to Cloud Run (no push to Artifact Registry needed)
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy fastapi-rag-service \
-            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag-repo/fastapi-rag:latest \
+            --source . \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
-            --allow-unauthenticated
+            --allow-unauthenticated \
+            --port=8001
