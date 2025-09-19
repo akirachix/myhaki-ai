@@ -3,7 +3,7 @@ from chromadb.config import Settings
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-# ✅ Connect to your local Chroma database using proper Settings
+# Connect to your local Chroma database using proper Settings
 client = chromadb.Client(Settings(persist_directory="./chroma"))
 collection = client.get_or_create_collection("cases")
 
