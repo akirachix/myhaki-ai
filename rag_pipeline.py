@@ -10,31 +10,25 @@ from supabase import create_client
 
 load_dotenv()
 
-# -----------------------------
-# Gemini AI Setup
-# -----------------------------
+
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
     raise ValueError("Missing GEMINI_API_KEY in .env file")
 configure(api_key=api_key)
 gemini_model = GenerativeModel('gemini-2.5-flash')
 
-# -----------------------------
-# Supabase Setup
-# -----------------------------
+
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# -----------------------------
-# Lazy-load Legal-BERT
-# -----------------------------
-MODEL_DIR = "/app/model_cache"  # Cache directory inside Docker
+
+MODEL_DIR = "/app/model_cache"  
 os.makedirs(MODEL_DIR, exist_ok=True)
 
 embedding_model_name = "nlpaueb/legal-bert-base-uncased"
 
-# Tokenizer and model are loaded on first use
+
 embedding_tokenizer = AutoTokenizer.from_pretrained(
     embedding_model_name,
     cache_dir=MODEL_DIR
@@ -46,9 +40,7 @@ embedding_model = AutoModel.from_pretrained(
 
 VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", 768))
 
-# -----------------------------
-# Functions
-# -----------------------------
+
 def embed_query(query: str) -> list[float]:
     """Generate embedding for a query using Legal-BERT"""
     inputs = embedding_tokenizer(
