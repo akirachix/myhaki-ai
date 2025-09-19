@@ -1,5 +1,4 @@
 name: Deploy FastAPI RAG to Cloud Run
-
 on:
   push:
     branches:
@@ -8,7 +7,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,24 +34,17 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
 
-      # Install Python dependencies
+      # Install dependencies
       - name: Install dependencies
-        run: pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+        run: pip install --upgrade pip && pip install -r requirements.txt
 
-      # Build Docker image
-      - name: Build Docker image
-        run: docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag-repo/fastapi-rag:latest .
-
-      # Push Docker image to Artifact Registry
-      - name: Push Docker image
-        run: docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag-repo/fastapi-rag:latest
-
-      # Deploy to Cloud Run
+      # Deploy to Cloud Run directly from source
       - name: Deploy to Cloud Run
         run: |
+          gcloud services enable cloudbuild.googleapis.com run.googleapis.com
           gcloud run deploy fastapi-rag-service \
-            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag-repo/fastapi-rag:latest \
+            --source . \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated \
-            --timeout=10m
+            --port=8001
