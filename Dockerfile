@@ -24,4 +24,5 @@ COPY . .
 EXPOSE $PORT
 
 # Start FastAPI using the Cloud Run assigned port
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
+# Add --workers 1 and longer timeout to avoid startup issues with lazy-loading
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 300"]
