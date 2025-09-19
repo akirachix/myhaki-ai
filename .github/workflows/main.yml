@@ -8,6 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -27,21 +28,20 @@ jobs:
         with:
           python-version: '3.11'
 
-      # **Cache pip dependencies**
+      # Cache pip dependencies
       - name: Cache pip
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
 
-      # Install Python dependencies (except torch if using prebuilt image)
+      # Install Python dependencies (except torch, already in base image)
       - name: Install dependencies
-        run: pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+        run: pip install --upgrade pip && pip install -r requirements.txt
 
       # Build Docker image
       - name: Build Docker image
-        run: |
-          docker build -t fastapi-rag .
+        run: docker build -t fastapi-rag .
 
       # Deploy to Cloud Run
       - name: Deploy to Cloud Run
