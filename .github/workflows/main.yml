@@ -7,24 +7,43 @@ on:
 
 jobs:
   deploy:
+    name: Deploy FastAPI App
     runs-on: ubuntu-latest
-
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      VECTOR_SIZE: ${{ secrets.VECTOR_SIZE }}
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      # Step 3: Setup Cloud SDK
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      # Step 4: Deploy to Cloud Run
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Create .env file from secrets
+        run: |
+          echo "GEMINI_API_KEY=${GEMINI_API_KEY}" >> .env
+          echo "SUPABASE_DB_URL=${SUPABASE_DB_URL}" >> .env
+          echo "SUPABASE_URL=${SUPABASE_URL}" >> .env
+          echo "SUPABASE_KEY=${SUPABASE_KEY}" >> .env
+          echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
+
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy fastapi-service \
@@ -32,9 +51,4 @@ jobs:
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated \
-            --port=8080 \
-            --update-env-vars GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},\
-SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }},\
-SUPABASE_URL=${{ secrets.SUPABASE_URL }},\
-SUPABASE_KEY=${{ secrets.SUPABASE_KEY }},\
-VECTOR_SIZE=${{ secrets.VECTOR_SIZE }}
+            --port=8080
