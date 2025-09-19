@@ -8,46 +8,61 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      VECTOR_SIZE: ${{ secrets.VECTOR_SIZE }}
 
     steps:
+      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
+      # 3️⃣ Set up gcloud CLI
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
+      # 4️⃣ Configure Docker to authenticate to GCP
+      - name: Configure Docker for GCP
+        run: gcloud auth configure-docker
+
+      # 5️⃣ Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # Cache pip for faster builds
+      # 6️⃣ Cache pip dependencies to speed up workflow
       - name: Cache pip
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
 
+      # 7️⃣ Install Python dependencies
       - name: Install dependencies
-        run: pip install --upgrade pip && pip install -r requirements.txt
+        run: pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-      # Build Docker image
+      # 8️⃣ Build Docker image
       - name: Build Docker image
         run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag:latest .
 
-      # Push image to GCR
-      - name: Push Docker image to GCR
+      # 9️⃣ Push Docker image to GCR
+      - name: Push Docker image
         run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag:latest
 
-      # Deploy to Cloud Run
+      # 🔟 Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy fastapi-rag-service \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag:latest \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated
