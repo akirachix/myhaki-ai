@@ -49,5 +49,5 @@ jobs:
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated \
-            --port=8080
+            --port=8080 \
             --timeout=10m
