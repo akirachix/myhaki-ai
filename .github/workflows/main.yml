@@ -20,7 +20,6 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-     
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy fastapi-service \
@@ -28,4 +27,10 @@ jobs:
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated \
-            --port=8080
+            --port=8080 \
+            --update-env-vars \
+              GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},\
+              SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }},\
+              SUPABASE_URL=${{ secrets.SUPABASE_URL }},\
+              SUPABASE_KEY=${{ secrets.SUPABASE_KEY }},\
+              VECTOR_SIZE=${{ secrets.VECTOR_SIZE }}
