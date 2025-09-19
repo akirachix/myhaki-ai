@@ -1,5 +1,4 @@
-name: Deploy FastAPI App to Cloud Run
-
+name: Deploy FastAPI RAG to Cloud Run
 on:
   push:
     branches:
@@ -7,48 +6,48 @@ on:
 
 jobs:
   deploy:
-    name: Deploy FastAPI App
     runs-on: ubuntu-latest
-    env:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-      VECTOR_SIZE: ${{ secrets.VECTOR_SIZE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
+      # Set up Cloud SDK
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
+      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      # **Cache pip dependencies**
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+
+      # Install Python dependencies (except torch if using prebuilt image)
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-      - name: Create .env file from secrets
+      # Build Docker image
+      - name: Build Docker image
         run: |
-          echo "GEMINI_API_KEY=${GEMINI_API_KEY}" >> .env
-          echo "SUPABASE_DB_URL=${SUPABASE_DB_URL}" >> .env
-          echo "SUPABASE_URL=${SUPABASE_URL}" >> .env
-          echo "SUPABASE_KEY=${SUPABASE_KEY}" >> .env
-          echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
+          docker build -t fastapi-rag .
 
+      # Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy fastapi-service \
-            --source . \
+          gcloud run deploy fastapi-rag-service \
+            --image fastapi-rag \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
-            --allow-unauthenticated \
-            --port=8080
+            --allow-unauthenticated
