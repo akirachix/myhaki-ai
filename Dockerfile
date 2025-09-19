@@ -1,4 +1,4 @@
-# Use slim Python image
+# Base image
 FROM python:3.11-slim
 
 # Environment variables
