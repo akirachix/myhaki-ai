@@ -1,4 +1,4 @@
-name: Deploy ADK Agent to Cloud Run
+name: Deploy FastAPI App to Cloud Run
 
 on:
   push:
@@ -7,10 +7,11 @@ on:
 
 jobs:
   deploy:
-    name: Deploy ADK Agent
+    name: Deploy FastAPI App
     runs-on: ubuntu-latest
 
     steps:
+
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -22,22 +23,13 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
 
-    - name: Install ADK
-      run: pip install google-adk
-    
-    
     - name: Deploy to Cloud Run
-      working-directory: .
       run: |
-        adk deploy cloud_run \
+        gcloud run deploy fastapi-service \
+          --source . \
           --project=${{ secrets.GCP_PROJECT_ID }} \
-          --service_name=myhaki-agent \
-          --app_name=myhaki-agent \
           --region=europe-west1 \
-          ./myhaki-agent
-    
+          --allow-unauthenticated \
+          --port=8080
+  
