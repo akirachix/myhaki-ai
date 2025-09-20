@@ -1,44 +1,46 @@
-name: Deploy FastAPI RAG to Cloud Run
-
+name: Deploy FastAPI App to Cloud Run
 on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     name: Deploy FastAPI App
     runs-on: ubuntu-latest
-
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      VECTOR_SIZE: ${{ secrets.VECTOR_SIZE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
-
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
-
-      - name: Configure Docker to use Google Cloud
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
         run: |
-          gcloud auth configure-docker
-
-      - name: Build and push Docker image
+          pip install -r requirements.txt
+      - name: Create .env file from secrets
         run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag:latest .
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag:latest
-
+          echo "GEMINI_API_KEY=${GEMINI_API_KEY}" >> .env
+          echo "SUPABASE_DB_URL=${SUPABASE_DB_URL}" >> .env
+          echo "SUPABASE_URL=${SUPABASE_URL}" >> .env
+          echo "SUPABASE_KEY=${SUPABASE_KEY}" >> .env
+          echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy fastapi-rag-service \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag:latest \
-            --project ${{ secrets.GCP_PROJECT_ID }} \
-            --region europe-west1 \
+          gcloud run deploy fastapi-service \
+            --source . \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --region=europe-west1 \
             --allow-unauthenticated \
-            --port 8000 \
-            --timeout 15m \
-            --min-instances 1 \
-            --set-env-vars=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},SUPABASE_URL=${{ secrets.SUPABASE_URL }},SUPABASE_KEY=${{ secrets.SUPABASE_KEY }},VECTOR_SIZE=${{ secrets.VECTOR_SIZE }}
+            --port=8000  \  
