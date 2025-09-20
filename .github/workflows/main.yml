@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-     
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -20,24 +19,17 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-   
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-     
-      - name: Create .env file from secrets
+      - name: Configure Docker to use Google Cloud
         run: |
-          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
-          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
-          echo "VECTOR_SIZE=${{ secrets.VECTOR_SIZE }}" >> .env
+          gcloud auth configure-docker
 
-      
-      - name: Push prebuilt Docker image
+      - name: Build and push Docker image
         run: |
-          docker tag fastapi-rag:latest gcr.io/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag:latest
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag:latest .
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/fastapi-rag:latest
-
 
       - name: Deploy to Cloud Run
         run: |
@@ -47,4 +39,6 @@ jobs:
             --region europe-west1 \
             --allow-unauthenticated \
             --port 8000 \
-            --timeout 15m
+            --timeout 15m \
+            --min-instances 1 \
+            --set-env-vars=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},SUPABASE_URL=${{ secrets.SUPABASE_URL }},SUPABASE_KEY=${{ secrets.SUPABASE_KEY }},VECTOR_SIZE=${{ secrets.VECTOR_SIZE }}
