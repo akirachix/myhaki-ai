@@ -60,7 +60,6 @@ def embed_query(query: str) -> list[float]:
         outputs = embedding_model(**inputs)
     return outputs.last_hidden_state.mean(dim=1).squeeze().numpy().tolist()
 
-# --- Retrieval, Urgency, and Response Generation functions (unchanged) ---
 def retrieve_relevant_chunks(query: str, top_k: int = 5):
     """Retrieve relevant documents from Supabase using the query embedding."""
     query_embedding = embed_query(query)
