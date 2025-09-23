@@ -49,6 +49,7 @@ nvidia-nccl-cu12==2.27.3
 nvidia-nvjitlink-cu12==12.8.93
 nvidia-nvtx-cu12==12.8.90
 packaging==25.0
+pillow==11.3.0
 postgrest==2.19.0
 proto-plus==1.26.1
 protobuf==5.29.5
@@ -77,6 +78,8 @@ supabase-functions==2.19.0
 sympy==1.14.0
 tokenizers==0.22.1
 torch==2.8.0
+torchaudio==2.8.0
+torchvision==0.23.0
 tqdm==4.67.1
 transformers==4.56.2
 triton==3.4.0
