@@ -40,10 +40,10 @@ jobs:
           echo "SUPABASE_KEY=${SUPABASE_KEY}" >> .env
           echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
 
-      - name: Deploy to Cloud Run using Docker Hub latest image
+      - name: Deploy to Cloud Run using Docker Hub image
         run: |
           gcloud run deploy fastapi-service \
-            --image lwambisrat/fastapi-rag:latest \
+            --image docker.io/lwambisrat/fastapi-rag:latest \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated
