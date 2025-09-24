@@ -38,7 +38,7 @@ jobs:
       - name: Deploy to Cloud Run using GHCR image
         run: |
           gcloud run deploy fastapi-service \
-            --image ghcr.io/akirachix/myhaki-ai/fastapi-rag:latest \
+            --image ghcr.io/lwambisrat/myhaki-ai/fastapi-rag:latest \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated
