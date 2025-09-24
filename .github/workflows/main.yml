@@ -1,0 +1,44 @@
+name: Deploy FastAPI App to Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # Only deploy when main branch is updated
+
+jobs:
+  deploy:
+    name: Deploy FastAPI App
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      VECTOR_SIZE: ${{ secrets.VECTOR_SIZE }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Create .env file from secrets
+        run: |
+          echo "GEMINI_API_KEY=${GEMINI_API_KEY}" >> .env
+          echo "SUPABASE_DB_URL=${SUPABASE_DB_URL}" >> .env
+          echo "SUPABASE_URL=${SUPABASE_URL}" >> .env
+          echo "SUPABASE_KEY=${SUPABASE_KEY}" >> .env
+          echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
+
+      - name: Deploy to Cloud Run using GHCR image
+        run: |
+          gcloud run deploy fastapi-service \
+            --image ghcr.io/akirachix/myhaki-ai/fastapi-rag:latest \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --region=europe-west1 \
+            --allow-unauthenticated
