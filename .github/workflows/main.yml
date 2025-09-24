@@ -1,8 +1,10 @@
 name: Deploy FastAPI App to Cloud Run
+
 on:
   push:
     branches:
-      - main
+      - main 
+
 jobs:
   deploy:
     name: Deploy FastAPI App
@@ -16,19 +18,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u lwambisrat --password-stdin
+
       - name: Create .env file from secrets
         run: |
           echo "GEMINI_API_KEY=${GEMINI_API_KEY}" >> .env
@@ -36,11 +37,11 @@ jobs:
           echo "SUPABASE_URL=${SUPABASE_URL}" >> .env
           echo "SUPABASE_KEY=${SUPABASE_KEY}" >> .env
           echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
-      - name: Deploy to Cloud Run
+
+      - name: Deploy to Cloud Run using GHCR image
         run: |
           gcloud run deploy fastapi-service \
-            --source . \
+            --image ghcr.io/lwambisrat/myhaki-ai/fastapi-rag:latest \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
-            --allow-unauthenticated \
-            --port=8000 
+            --allow-unauthenticated
