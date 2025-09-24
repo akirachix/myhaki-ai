@@ -3,7 +3,7 @@ name: Deploy FastAPI App to Cloud Run
 on:
   push:
     branches:
-      - main  # Only deploy when main branch is updated
+      - main 
 
 jobs:
   deploy:
@@ -28,7 +28,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Log in to GHCR
-        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u lwambsrat --password-stdin
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u lwambisrat --password-stdin
 
       - name: Create .env file from secrets
         run: |
@@ -41,7 +41,7 @@ jobs:
       - name: Deploy to Cloud Run using GHCR image
         run: |
           gcloud run deploy fastapi-service \
-            --image ghcr.io/lwambsrat/myhaki-ai/fastapi-rag:latest \
+            --image ghcr.io/lwambisrat/myhaki-ai/fastapi-rag:latest \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated
