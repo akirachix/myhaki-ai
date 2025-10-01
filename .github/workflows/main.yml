@@ -1,4 +1,4 @@
-```yaml
+
 name: Deploy FastAPI App to Cloud Run
 
 on:
