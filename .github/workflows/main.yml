@@ -10,7 +10,7 @@ jobs:
   deploy:
     name: Deploy FastAPI App
     runs-on: ubuntu-latest
-    timeout-minutes: 1500
+    timeout-minutes: 1000
 
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -39,9 +39,19 @@ jobs:
           echo "SUPABASE_KEY=${SUPABASE_KEY}" >> .env
           echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
 
-      - name: Deploy to Cloud Run
-        timeout-minutes: 1500
+      - name: Verify env variables
+        run: |
+          for var in GEMINI_API_KEY SUPABASE_DB_URL SUPABASE_URL SUPABASE_KEY VECTOR_SIZE; do
+            if [ -z "${!var}" ]; then
+              echo "::error::$var is NOT set"
+              exit 1
+            else
+              echo "$var is set ✅"
+            fi
+          done
 
+      - name: Deploy to Cloud Run
+        timeout-minutes: 1000
         run: |
           gcloud run deploy myhaki-agent \
             --source . \
