@@ -1,4 +1,3 @@
-
 name: Deploy FastAPI App to Cloud Run
 
 on:
@@ -10,7 +9,7 @@ jobs:
   deploy:
     name: Deploy FastAPI App
     runs-on: ubuntu-latest
-    timeout-minutes:1200
+    timeout-minutes: 1200
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
@@ -27,11 +26,9 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-     
       - name: Create .env file
         run: |
           echo "GEMINI_API_KEY=${GEMINI_API_KEY}" >> .env
@@ -41,7 +38,7 @@ jobs:
           echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
 
       - name: Deploy to Cloud Run
-        timeout-munites: 1200
+        timeout-minutes: 1200
         run: |
           gcloud run deploy fastapi-service \
             --source . \
@@ -49,4 +46,3 @@ jobs:
             --region=europe-west1 \
             --allow-unauthenticated \
             --port=8080
-
