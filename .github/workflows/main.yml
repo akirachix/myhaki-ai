@@ -40,7 +40,7 @@ jobs:
           echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
 
       - name: Deploy to Cloud Run
-        timeout-munites: 1500
+        timeout-minutes: 1500
 
         run: |
           gcloud run deploy myhaki-agent \
