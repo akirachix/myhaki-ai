@@ -1,3 +1,4 @@
+
 name: Deploy FastAPI App to Cloud Run
 
 on:
@@ -9,7 +10,8 @@ jobs:
   deploy:
     name: Deploy FastAPI App
     runs-on: ubuntu-latest
-    timeout-minutes: 1200
+    timeout-minutes: 1500
+
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
@@ -38,11 +40,14 @@ jobs:
           echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
 
       - name: Deploy to Cloud Run
-        timeout-minutes: 1200
+        timeout-munites: 1500
+
         run: |
-          gcloud run deploy fastapi-service \
+          gcloud run deploy myhaki-agent \
             --source . \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated \
             --port=8080
+            --memory=1Gi
+
