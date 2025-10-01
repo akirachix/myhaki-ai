@@ -48,6 +48,7 @@ jobs:
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated \
-            --port=8080
-            --memory=2Gi --cpu-boost
+            --port=8080 \
+            --memory=1Gi \
+            --cpu-boost
 
