@@ -1,8 +1,6 @@
 fastapi
-uvicorn[standard]
-transformers
+uvicorn
 python-dotenv
 supabase
-numpy
-torch
-
+sentence-transformers
+google-generativeai
