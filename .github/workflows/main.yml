@@ -11,6 +11,7 @@ jobs:
     name: Deploy FastAPI App
     runs-on: ubuntu-latest
     timeout-minutes: 1500
+
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
@@ -27,11 +28,9 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-     
       - name: Create .env file
         run: |
           echo "GEMINI_API_KEY=${GEMINI_API_KEY}" >> .env
@@ -42,6 +41,7 @@ jobs:
 
       - name: Deploy to Cloud Run
         timeout-munites: 1500
+
         run: |
           gcloud run deploy myhaki-agent \
             --source . \
