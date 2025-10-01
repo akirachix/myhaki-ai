@@ -49,5 +49,5 @@ jobs:
             --region=europe-west1 \
             --allow-unauthenticated \
             --port=8080
-            --memory=1Gi --cpu-boost
+            --memory=2Gi --cpu-boost
 
