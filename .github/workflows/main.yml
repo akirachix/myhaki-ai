@@ -10,7 +10,7 @@ jobs:
   deploy:
     name: Deploy FastAPI App
     runs-on: ubuntu-latest
-    timeout-minutes: 2000
+    timeout-minutes: 1000
 
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -46,7 +46,7 @@ jobs:
           echo "----- END .env -----"
 
       - name: Deploy to Cloud Run
-        timeout-minutes: 2000
+        timeout-minutes: 1000
         run: |
           gcloud run deploy myhaki-agent \
             --source . \
