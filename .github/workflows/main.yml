@@ -46,7 +46,6 @@ jobs:
           echo "----- END .env -----"
 
       - name: Deploy to Cloud Run
-        timeout-minutes: 1000
         run: |
           gcloud run deploy myhaki-agent \
             --source . \
@@ -54,5 +53,6 @@ jobs:
             --region=europe-west1 \
             --allow-unauthenticated \
             --port=8080 \
+            -set-env-vars PORT=8080 \
             --memory=1Gi \
             --cpu-boost
