@@ -10,7 +10,7 @@ jobs:
   deploy:
     name: Deploy FastAPI App
     runs-on: ubuntu-latest
-    timeout-minutes: 1000
+    timeout-minutes: 600
 
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -52,7 +52,7 @@ jobs:
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --region=europe-west1 \
             --allow-unauthenticated \
-            --port=8080 \
+            # --port=8080 \
             --set-env-vars GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},SUPABASE_URL=${{ secrets.SUPABASE_URL }},SUPABASE_KEY=${{ secrets.SUPABASE_KEY }},VECTOR_SIZE=${{ secrets.VECTOR_SIZE }}
 
             # --set-env-vars PORT=8080 \
