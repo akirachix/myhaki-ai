@@ -11,8 +11,11 @@ class CaseInput(BaseModel):
 
 @app.on_event("startup")
 def preload_model():
+    print("Starting FastAPI initialization...")
     get_embedding_model()
     print("Embedding model loaded successfully.")
+    print("FastAPI startup initiated on port:", os.getenv("PORT", 8080))
+
 
 @app.get("/")
 def health_check():
@@ -32,6 +35,7 @@ def predict_case(data: CaseInput):
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8080))
+    print("FastAPI application launching on port:", port)
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=port)
 
