@@ -1,10 +1,11 @@
 import json
+import functools
+import os
 from sentence_transformers import SentenceTransformer
 from google.generativeai import GenerativeModel, configure
 from datetime import datetime
-import os
 from supabase import create_client
-import functools
+from google.api_core import exceptions
 
 
 api_key = os.getenv("GEMINI_API_KEY")
@@ -15,6 +16,9 @@ gemini_model = GenerativeModel('gemini-2.5-flash')
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise ValueError("Missing Supabase credentials in environment")
+
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", 768))
