@@ -53,6 +53,8 @@ jobs:
             --region=europe-west1 \
             --allow-unauthenticated \
             --port=8080 \
-            --set-env-vars PORT=8080 \
-            --memory=1Gi \
-            --cpu-boost
+            --set-env-vars GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},SUPABASE_URL=${{ secrets.SUPABASE_URL }},SUPABASE_KEY=${{ secrets.SUPABASE_KEY }},VECTOR_SIZE=${{ secrets.VECTOR_SIZE }}
+
+            # --set-env-vars PORT=8080 \
+            # --memory=1Gi \
+            # --cpu-boost
