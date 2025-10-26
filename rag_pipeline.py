@@ -3,11 +3,11 @@ from sentence_transformers import SentenceTransformer
 from google.generativeai import GenerativeModel, configure
 from datetime import datetime
 import os
-from dotenv import load_dotenv
 from supabase import create_client
 import functools
-
+from dotenv import load_dotenv
 load_dotenv()
+
 
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
