@@ -75,7 +75,7 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       VECTOR_SIZE: ${{ secrets.VECTOR_SIZE }}
-      IMAGE_NAME: ${{ secrets.IMAGE_NAME }}  # e.g., lwambisrat/fastapi-rag
+      IMAGE_NAME: lwambisrat/fastapi-rag  # e.g., lwambisrat/fastapi-rag
       REGION: europe-west1
       SERVICE_NAME: myhaki-agent
 
