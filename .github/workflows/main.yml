@@ -1,67 +1,10 @@
 
-# name: Deploy FastAPI App to Cloud Run
-
-# on:
-#   push:
-#     branches:
-#       - main
-
-# jobs:
-#   deploy:
-#     name: Deploy FastAPI App
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 2000
-
-#     env:
-#       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-#       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-#       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-#       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-#       VECTOR_SIZE: ${{ secrets.VECTOR_SIZE }}
-
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v4
-
-#       - name: Authenticate to Google Cloud
-#         uses: google-github-actions/auth@v2
-#         with:
-#           credentials_json: '${{ secrets.GCP_SA_KEY }}'
-
-#       - name: Set up Cloud SDK
-#         uses: google-github-actions/setup-gcloud@v2
-
-#       - name: Create .env file
-#         run: |
-#           echo "GEMINI_API_KEY=${GEMINI_API_KEY}" >> .env
-#           echo "SUPABASE_DB_URL=${SUPABASE_DB_URL}" >> .env
-#           echo "SUPABASE_URL=${SUPABASE_URL}" >> .env
-#           echo "SUPABASE_KEY=${SUPABASE_KEY}" >> .env
-#           echo "VECTOR_SIZE=${VECTOR_SIZE}" >> .env
-
-#       - name: Show .env file
-#         run: |
-#           echo "----- START .env -----"
-#           cat .env
-#           echo "----- END .env -----"
-
-#       - name: Deploy to Cloud Run
-#         timeout-minutes: 2000
-#         run: |
-#           gcloud run deploy myhaki-agent \
-#             --source . \
-#             --project=${{ secrets.GCP_PROJECT_ID }} \
-#             --region=europe-west1 \
-#             --allow-unauthenticated \
-#             --port=8080 \
-#             --memory=1Gi \
-#             --cpu-boost
 name: Deploy FastAPI App from Docker Hub to Cloud Run
 
 on:
   push:
     branches:
-      - feature/myhaki_predictive_agent  # change to 'main' if deploying from main
+      - feature/myhaki_predictive_agent  
 
 jobs:
   deploy:
@@ -75,7 +18,7 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       VECTOR_SIZE: ${{ secrets.VECTOR_SIZE }}
-      IMAGE_NAME: lwambisrat/fastapi-rag  # e.g., lwambisrat/fastapi-rag
+      IMAGE_NAME: lwambisrat/fastapi-rag  
       REGION: europe-west1
       SERVICE_NAME: myhaki-agent
 
